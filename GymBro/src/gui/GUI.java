@@ -57,6 +57,7 @@ public class GUI {
 		
 		//whatever you do, don't delete this for-loop
 		//for some reason the muscle enum doesn't load fully without this.
+		
 		for (muscle m : musclegroup.back.getMuscles()) {
 		}
 		
@@ -165,8 +166,7 @@ public class GUI {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.anchor = GridBagConstraints.CENTER;
 		
-		JLabel calLabel = new JLabel("7 Day Calendar");
-		calLabel.setAlignmentX(JLabel.CENTER);
+		JLabel calLabel = new JLabel("Gym Bro Calendar", SwingConstants.CENTER);
 		calLabel.setFont(new Font("calLabel", Font.BOLD, 24));
 		
 		west.add(calLabel, c);
@@ -389,8 +389,7 @@ public class GUI {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-
+				
 			}
 
 		});
@@ -399,7 +398,8 @@ public class GUI {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+				
+				JOptionPane.showMessageDialog(new JFrame("Credit"), "Freeware produced independently by Kyle Griffin\nCopyright 2020");
 
 			}
 

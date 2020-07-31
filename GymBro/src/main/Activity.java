@@ -58,6 +58,10 @@ public class Activity implements Serializable{
 		return muscleList;
 	}
 	
+	public muscle[] getSecondaryMuscleList() {
+		return getExercise().getSecondaryMuscles();
+	}
+	
 	public void addMuscleList(muscle[] in) {
 		muscleList = in;
 	}

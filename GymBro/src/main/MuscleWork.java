@@ -13,11 +13,32 @@ public class MuscleWork implements Comparable<MuscleWork> {
 
 	private muscle musc;
 	private int count, KRP;
+	private boolean isPrimary;
 
+	/**
+	 * Constructor that automatically sets this muscleWork object as a primary muscle.
+	 * 
+	 * @param musc
+	 * @param count
+	 * @param KRP
+	 */
 	public MuscleWork(muscle musc, int count, int KRP) {
+		this(musc, count, KRP, true);
+	}
+	
+	/**
+	 * Constructor that sets whether is a primary muscle or not.
+	 * 
+	 * @param musc
+	 * @param count
+	 * @param KRP
+	 * @param isPrimary
+	 */
+	public MuscleWork(muscle musc, int count, int KRP, boolean isPrimary) {
 		this.musc = musc;
 		this.count = count;
 		this.KRP = KRP;
+		this.isPrimary = isPrimary;
 	}
 
 	public muscle getMuscle() {
