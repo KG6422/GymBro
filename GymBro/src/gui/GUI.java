@@ -36,6 +36,7 @@ import main.ex;
 import main.muscle;
 import main.musclegroup;
 import main.stretches;
+import user.UserProfile;
 import main.DaysList;
 import main.GymDay;
 import main.Pack;
@@ -46,6 +47,7 @@ public class GUI {
 	private static DaysList list;
 	private final static int numDaysShown = 7;
 	private static JPanel cdl;
+	private static JPanel EastPanel;
 	private static MainPanel mainPanel;
 	public static File savePoint, prefSavePoint;
 	private static JScrollPane scrollPane;
@@ -64,6 +66,7 @@ public class GUI {
 		}
 		for (stretches s : stretches.values()) {
 		}
+		
 		
 		// GUI
 
@@ -219,6 +222,10 @@ public class GUI {
 		// set colors
 		menubar.setOpaque(true);
 		menubar.setBackground(Color.gray);
+		
+		//User Profile on East side
+		EastPanel = CreateEastPanel();
+		frame.add(BorderLayout.EAST, EastPanel);
 
 		// set Frame visible
 		frame.setVisible(true);
@@ -471,6 +478,12 @@ public class GUI {
 
 		}
 	}
+	
+	protected static JPanel CreateEastPanel() {
+		JPanel pan = new JPanel();
+		
+		return pan;
+	}
 
 	static void ClearDayRoster() {
 		cdl.removeAll();
@@ -532,5 +545,7 @@ public class GUI {
 		mainPanel.repaint();
 		mainPanel.setVisible(true);
 	}
+	
+	
 
 }

@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
@@ -33,6 +35,7 @@ public class AddPanel extends JPanel {
 	private KTree tree;
 	private DefaultMutableTreeNode top;
 	private JScrollPane treeView;
+	private JLabel selectedEx;
 	private Object[] returnList; // 0 Activity, 1 Sets, 2 Reps, 3 Weight, 4 KRP *can leave empty*, 5 Muscle List,
 									// 6 *can leave empty*
 
@@ -46,10 +49,12 @@ public class AddPanel extends JPanel {
 		GridBagConstraints f = new GridBagConstraints();
 		f.anchor = GridBagConstraints.ABOVE_BASELINE;
 		f.fill = GridBagConstraints.HORIZONTAL;
-		f.gridy = 0;
+		f.gridy = GridBagConstraints.RELATIVE;
 		f.gridx = 1;
 		f.ipady = 1;
 
+		selectedEx = new JLabel("Selected: none", SwingConstants.CENTER);
+		selectedEx.setFont(new Font("selected ex" , Font.ITALIC, 18));
 		JLabel searchLabel = new JLabel("Search: ", JLabel.TRAILING);
 		this.add(searchLabel, f);
 
@@ -58,8 +63,7 @@ public class AddPanel extends JPanel {
 		searchLabel.setLabelFor(searchField);
 		this.add(searchField, f);
 
-		f.gridx = 2;
-		f.gridy = 1;
+		//f.gridy = 1;
 		f.gridwidth = 1;
 		f.gridheight = 1;
 
@@ -79,7 +83,7 @@ public class AddPanel extends JPanel {
 				} else {
 					returnList[0] = node.getUserObject(); // name
 					returnList[5] = ex.findFromName((String) node.getUserObject()).getPrimaryMuscles(); // primary
-																										// muscles just
+					selectedEx.setText("Selected: " + returnList[0]);																					// muscles just
 																										// for now
 					// ** need to implement adding secondary muscles to this list as well!!!!!
 				}
@@ -93,47 +97,31 @@ public class AddPanel extends JPanel {
 		this.add(treeView, f);
 
 		f.ipady = 0;
-		f.gridy = 2;
+		//f.gridy = 2;
 		f.insets = new Insets(10, 0, 0, 0);
 		JButton openAllToggle = new JButton("Toggle View");
 		this.add(openAllToggle, f);
 
 		f.gridheight = 1;
-		f.gridx = 1;
 		f.insets = new Insets(5, 0, 0, 0);
 
-		f.gridy = 3;
-		JLabel setsLabel = new JLabel("Sets: ", JLabel.TRAILING);
-		this.add(setsLabel, f);
+		
 
-		f.gridx = 2;
 		JTextField setsField = new JTextField(20);
-		setsLabel.setLabelFor(setsField);
 		this.add(setsField, f);
 
-		f.gridy = 4;
-		f.gridx = 1;
-		JLabel repsLabel = new JLabel("Reps: ", JLabel.TRAILING);
-		this.add(repsLabel, f);
 
-		f.gridx = 2;
 		JTextField repsField = new JTextField(20);
-		repsLabel.setLabelFor(repsField);
+		
 		this.add(repsField, f);
 
-		f.gridy = 5;
-		f.gridx = 1;
-		JLabel weightLabel = new JLabel("Weight: ", JLabel.TRAILING);
-		this.add(weightLabel, f);
+		
 
-		f.gridx = 2;
 		JTextField weightField = new JTextField(20);
-		weightLabel.setLabelFor(weightField);
 		this.add(weightField, f);
 
 		f.fill = GridBagConstraints.CENTER;
-		f.gridy = 6;
-		f.gridx = 2;
+		//f.gridy = 6;
 		f.ipadx = 10;
 		JLabel hint = new JLabel("Use commas (,) to separate reps and weights if needed");
 		hint.setFont(new Font("Hint", Font.ITALIC, 12));
@@ -143,17 +131,42 @@ public class AddPanel extends JPanel {
 		f.ipadx = 35;
 		f.ipady = 15;
 		f.insets = new Insets(10, 0, 0, 0);
-		f.gridy = 7;
-		f.gridx = 1;
+		//f.gridy = 7;
+		
+		JPanel buttonPanel = new JPanel(new GridLayout(1,3));
 		JButton doneButton = new JButton("Done");
 		doneButton.setBackground(new Color(123, 168, 119));
-		this.add(doneButton, f);
+		
 
-		f.gridx = 3;
 		JButton cancelButton = new JButton("Cancel");
 		cancelButton.setBackground(new Color(191, 133, 115));
-		this.add(cancelButton, f);
-
+		buttonPanel.add(doneButton);
+		buttonPanel.add(new JPanel()); // blank space between the two buttons
+		buttonPanel.add(cancelButton);
+		this.add(buttonPanel, f);
+		
+		f.weightx = 0;
+		//f.gridy = 8;
+		this.add(selectedEx, f);
+		
+		
+		f.gridy = 3;
+		f.gridx = 1;
+		JLabel setsLabel = new JLabel("Sets: ", JLabel.TRAILING);
+		this.add(setsLabel, f);
+		
+		f.gridy = 4;
+		JLabel repsLabel = new JLabel("Reps: ", JLabel.TRAILING);
+		this.add(repsLabel, f);
+		
+	    f.gridy = 5;
+		JLabel weightLabel = new JLabel("Weight: ", JLabel.TRAILING);
+		this.add(weightLabel, f);
+		
+		repsLabel.setLabelFor(repsField);
+		weightLabel.setLabelFor(weightField);
+		setsLabel.setLabelFor(setsField);
+		
 		this.revalidate();
 		this.repaint();
 
