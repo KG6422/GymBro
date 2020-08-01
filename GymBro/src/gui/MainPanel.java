@@ -10,6 +10,7 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -34,6 +35,7 @@ import main.GymDay;
 import main.MuscleWork;
 import main.ex;
 import main.muscle;
+import main.stretches;
 
 public class MainPanel extends JPanel {
 
@@ -210,12 +212,23 @@ public class MainPanel extends JPanel {
 		// musclepanel
 		add(musclePanel = dealWithMusclePanel(), c);
 		musclePanel.updateUI();
+		
 		// extraMusclePanel initialized in the dealWithMusclePanel() method
 		JLabel extraLabel1 = new JLabel("Extra Muscles Worked", SwingConstants.CENTER);
 		extraLabel1.setFont(new Font("Extra Label", Font.BOLD, 36));
+		c.insets = new Insets(10, 0, 10, 0);
 		add(extraLabel1, c);
+		c.insets = new Insets(0, 0, 0, 0);
+		
 		add(extraMusclePanel, c);
 
+		JLabel stretchesLabel = new JLabel("Applicable Stretches", SwingConstants.CENTER);
+		stretchesLabel.setFont(new Font("stretches Label", Font.BOLD, 36));
+		add(stretchesLabel, c);
+		
+		JPanel stretchesPanel = returnableStretchesPanel();
+		add(stretchesPanel, c);
+		
 		c.insets = new Insets(10, 0, 0, 0);
 		JButton changeDayTypeButton = new JButton("Change the Type of Day");
 		changeDayTypeButton.setBackground(Color.PINK);
@@ -383,8 +396,8 @@ public class MainPanel extends JPanel {
 		// leftovers arraylist holds all the muscles
 		// while the mWork arrays are being built, each muscle that is included in the
 		// activities will be removed from the leftovers arraylist
-		ArrayList<muscle> leftovers = new ArrayList<>();
-		ArrayList<muscle> leftovers2 = new ArrayList<>();
+		ArrayList<MuscleWork> leftovers = new ArrayList<>();
+		ArrayList<MuscleWork> leftovers2 = new ArrayList<>();
 
 		mWork = new ArrayList<>();
 		mWork2 = new ArrayList<>();
@@ -408,17 +421,16 @@ public class MainPanel extends JPanel {
 					newMW.incrementKRP(mw.getKRP());
 				} else {
 					mWork2.add(mw);
-					leftovers2.add(mw.getMuscle());
 				}
 			}
 		}
-		
-		//initialize leftovers
+
+		// initialize leftovers
 		for (MuscleWork mw : mWork) {
-			leftovers.add(mw.getMuscle());
+			leftovers.add(mw);
 		}
 		for (MuscleWork mw : mWork2) {
-			leftovers2.add(mw.getMuscle());
+			leftovers2.add(mw);
 		}
 
 		pan.setLayout(new GridLayout((list.length + 1) / 2, 2));
@@ -444,8 +456,8 @@ public class MainPanel extends JPanel {
 					currKRP += mw.getKRP();
 					currCount += mw.getCount();
 					currColor = Color.YELLOW;
-					leftovers2.remove(mw.getMuscle());
-					leftovers.remove(mw.getMuscle());
+					leftovers2.remove(mw);
+					leftovers.remove(mw);
 				}
 			}
 			for (MuscleWork mw : mWork) {
@@ -453,11 +465,10 @@ public class MainPanel extends JPanel {
 					currKRP += mw.getKRP();
 					currCount += mw.getCount();
 					currColor = Color.GREEN;
-					leftovers.remove(mw.getMuscle());
-					leftovers2.remove(mw.getMuscle());
+					leftovers.remove(mw);
+					leftovers2.remove(mw);
 				}
 			}
-			
 
 			iconPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 			iconPanel.setBackground(currColor);
@@ -465,14 +476,6 @@ public class MainPanel extends JPanel {
 					new JLabel("Worked " + currCount + " times : KRP " + currKRP, SwingConstants.CENTER));
 
 			pan.add(iconPanel);
-		}
-		
-		//testing purposes
-		for (int i = 0 ; i < leftovers.size(); i++) {
-			System.out.println("primary: " + leftovers.get(i).toString());
-		}
-		for (int i = 0; i < leftovers2.size(); i++) {
-			System.out.println("secondary: " +leftovers2.get(i).toString());
 		}
 
 		pan.setBackground(Color.GRAY);
@@ -483,13 +486,122 @@ public class MainPanel extends JPanel {
 		pan.revalidate();
 
 		extraMusclePanel = DealWithExtraMusclePanel(leftovers, leftovers2);
-		
+		extraMusclePanel.revalidate();
+		extraMusclePanel.updateUI();
+		extraMusclePanel.setVisible(true);
+
+		return pan;
+	}
+
+	private JPanel DealWithExtraMusclePanel(ArrayList<MuscleWork> leftovers, ArrayList<MuscleWork> leftovers2) {
+		JPanel pan = new JPanel(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx = 0;
+		c.weighty = 1;
+		c.insets = new Insets(0, 0, 0, 0);
+		c.gridy = GridBagConstraints.RELATIVE;
+		c.anchor = GridBagConstraints.PAGE_START;
+		c.fill = GridBagConstraints.BOTH;
+
+		JLabel panPrimLabel = new JLabel("Primary Muscles", SwingConstants.CENTER);
+		panPrimLabel.setFont(new Font("panPrim", Font.BOLD, 24));
+
+		JPanel panPrim = new JPanel(new GridLayout(0, 2));
+		panPrim.setPreferredSize(new Dimension(150, leftovers.size() * 200));
+		for (int i = 0; i < leftovers.size(); i++) {
+			panPrim.add(returnableMuscleIcon(leftovers.get(i)));
+		}
+
+		JLabel panSecLabel = new JLabel("Secondary Muscles", SwingConstants.CENTER);
+		panSecLabel.setFont(new Font("panSec", Font.BOLD, 24));
+
+		JPanel panSec = new JPanel(new GridLayout(0, 2));
+		panSec.setPreferredSize(new Dimension(150, leftovers2.size() * 200));
+
+		for (int i = 0; i < leftovers2.size(); i++) {
+			panSec.add(returnableMuscleIcon(leftovers2.get(i)));
+		}
+
+		pan.add(panPrimLabel, c);
+		if (leftovers.size() == 0) {
+			pan.add(new JLabel("NO DATA", SwingConstants.CENTER), c);
+		}
+		pan.add(panPrim, c);
+		pan.add(panSecLabel, c);
+		if (leftovers2.size() == 0) {
+			pan.add(new JLabel("NO DATA", SwingConstants.CENTER), c);
+		}
+		pan.add(panSec, c);
+
+		int panelHeight = (leftovers.size() + leftovers2.size()) * 200;
+
+		if (panelHeight < 200) {
+			System.out.println("LESS THAN 200");
+			panelHeight = 200;
+		}
+		pan.setPreferredSize(new Dimension(150, panelHeight));
+		return pan;
+	}
+
+	/**
+	 * Returns a Muscle Icon JPanel - fits the requirement for the Primary/Secondary
+	 * Extra Muscles
+	 * 
+	 * @param mw the current MW - usually held within a list
+	 * @return JPanel that formats the MW into a viewable form
+	 */
+	private JPanel returnableMuscleIcon(MuscleWork mw) {
+		JPanel pan = new JPanel(new BorderLayout());
+
+		muscle m = mw.getMuscle();
+		JPanel iconPanel = new JPanel(new BorderLayout());
+		JLabel iconLabel = new JLabel(m.getName().toUpperCase(), SwingConstants.CENTER);
+		iconLabel.setFont(new Font("icon Label", Font.BOLD, 16));
+		JLabel iconMuscle = new JLabel(new ImageIcon(m.getImage()));
+		JLabel iconInfo = new JLabel("Worked " + mw.getCount() + " times : KRP " + mw.getKRP(), SwingConstants.CENTER);
+
+		iconPanel.add(BorderLayout.NORTH, iconLabel);
+		iconPanel.add(BorderLayout.CENTER, iconMuscle);
+		iconPanel.add(BorderLayout.SOUTH, iconInfo);
+
+		iconPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+		pan.add(iconPanel);
+
 		return pan;
 	}
 	
-	private JPanel DealWithExtraMusclePanel(ArrayList<muscle> leftovers, ArrayList<muscle> leftovers2) {
-		JPanel pan = new JPanel();
+	private JPanel returnableStretchesPanel() {
+		JPanel pan = new JPanel(new GridLayout(0,2));
+		ArrayList<stretches> list = new ArrayList<>();
+
+		for (muscle m : day.getType().getEnclosedMuscles()) {
+			ArrayList<stretches> stretchList = m.getStretches();
+			for (int i = 0 ; i < stretchList.size(); i++) {
+				if (!list.contains(stretchList.get(i))) {
+					list.add(stretchList.get(i));
+				}
+			}
+		}
 		
+		for (stretches s : list) {
+			System.out.println(s.getName());
+			JPanel stretchPanel = new JPanel(new BorderLayout());
+			JLabel stretchName = new JLabel(s.getName().toUpperCase(), SwingConstants.CENTER);
+			JLabel stretchIcon;
+			if (s.getImage() != null) {
+				stretchIcon = new JLabel(new ImageIcon(s.getImage()));
+			} else {
+				stretchIcon = new JLabel(new ImageIcon(new BufferedImage(50,50, BufferedImage.TYPE_INT_ARGB)));
+			}
+			stretchPanel.add(BorderLayout.CENTER, stretchIcon);
+			stretchPanel.add(BorderLayout.NORTH, stretchName);
+			stretchPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+			pan.add(stretchPanel);
+		}
+		pan.setPreferredSize(new Dimension(150, list.size() * 200));
+		pan.revalidate();
+		pan.updateUI();
+		pan.setVisible(true);
 		return pan;
 	}
 

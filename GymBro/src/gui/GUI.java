@@ -35,6 +35,7 @@ import main.DayType;
 import main.ex;
 import main.muscle;
 import main.musclegroup;
+import main.stretches;
 import main.DaysList;
 import main.GymDay;
 import main.Pack;
@@ -57,8 +58,11 @@ public class GUI {
 		
 		//whatever you do, don't delete this for-loop
 		//for some reason the muscle enum doesn't load fully without this.
-		
+		//REASON FOUND: because images are initialized by method call - java
+		//does not automatically do this
 		for (muscle m : musclegroup.back.getMuscles()) {
+		}
+		for (stretches s : stretches.values()) {
 		}
 		
 		// GUI

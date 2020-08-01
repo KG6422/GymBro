@@ -28,13 +28,18 @@ public enum DayType implements Serializable{
 		return _target;
 	}
 	
-	public muscle[] getEnclosedMuscles() {
+	public ArrayList<muscle> getEnclosedMusclesArrayList(){
 		ArrayList<muscle> list = new ArrayList<muscle>();
 		for (musclegroup m : _target) {
 			for (int i = 0; i < m.getMuscles().length; i++) {
 				list.add(m.getMuscles()[i]);
 			}
 		}
+		return list;
+	}
+	
+	public muscle[] getEnclosedMuscles() {
+		ArrayList<muscle> list = getEnclosedMusclesArrayList();
 		muscle[] returnable = new muscle[list.size()];
 		for (int i = 0; i < list.size(); i++) {
 			returnable[i] = list.get(i);

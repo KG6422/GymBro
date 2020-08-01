@@ -3,6 +3,7 @@ package main;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
@@ -164,12 +165,42 @@ public enum muscle implements Serializable {
 	public BufferedImage getImage() {
 		return image;
 	}
+	
+	public ArrayList<stretches> getStretches(){
+		ArrayList<stretches> list = new ArrayList<>();
+		for (stretches s : stretches.values()) {
+			if (s.getMuscleArrayList().contains(this)) {
+				list.add(s);
+			}
+		}
+		return list;
+	}
+	
+	public static muscle[] quads() {
+		return new muscle[] {quadriceps_rectus_femoris, quadriceps_vastus_lateralis,quadriceps_vastus_medialis,quadriceps_vastus_intermedius};
+	}
+	
+	public static muscle[] hams() {
+		return new muscle[] {hamstrings_biceps_femoris,hamstrings_semitendinosus,hamstrings_semimembranosus};
+	}
+	
+	public static muscle[] shoulder() {
+		return new muscle[] {deltoids_anterior, deltoids_posterior, deltoids_lateral};
+	}
+	
+	public static muscle[] traps() {
+		return new muscle[] {traps_upper, traps_middle, traps_lower};
+	}
+	
+	public static muscle[] pecs() {
+		return new muscle[] {pecs_upper, pecs_middle, pecs_lower, pecs_outer};
+	}
 
-	static muscle[] triceps() {
+	public static muscle[] triceps() {
 		return new muscle[] { triceps_longhead, triceps_lateralhead, triceps_medialhead };
 	}
 
-	static muscle[] biceps() {
+	public static muscle[] biceps() {
 		return new muscle[] { biceps_longhead, biceps_shorthead, biceps_brachialis };
 	}
 
