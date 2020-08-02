@@ -8,6 +8,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -55,19 +56,19 @@ public class GUI {
 	private static LocalDate cdl_storedDate;
 	protected static Object[] preferencesList;
 	public static final int preferencesSize = 1;
+	private static UserProfile profile;
 
 	public static void main(String[] args) {
-		
-		//whatever you do, don't delete this for-loop
-		//for some reason the muscle enum doesn't load fully without this.
-		//REASON FOUND: because images are initialized by method call - java
-		//does not automatically do this
+		profile = null;
+		// whatever you do, don't delete this for-loop
+		// for some reason the muscle enum doesn't load fully without this.
+		// REASON FOUND: because images are initialized by method call - java
+		// does not automatically do this
 		for (muscle m : musclegroup.back.getMuscles()) {
 		}
 		for (stretches s : stretches.values()) {
 		}
-		
-		
+
 		// GUI
 
 		try {
@@ -125,44 +126,43 @@ public class GUI {
 
 		cdl = new JPanel();
 		cdl.setLayout(new GridLayout(numDaysShown, 1));
-		
 
 		// this gains access to the .txt document that would hold a directory to load
 		// data from
 		String currentDirFile = System.getProperty("user.dir");
 		savePoint = new File(currentDirFile + "\\dir_sv.txt");
 		prefSavePoint = new File(currentDirFile + "\\pref_sv.txt");
-		
-		//preferences list
+
+		// preferences list
 		preferencesList = Pack.ReadPreferencesFromFile(prefSavePoint);
-		if (preferencesList[0] != null && (boolean)preferencesList[0]) {
-			Pack.ReadObjectFromFile(savePoint);		
+		if (preferencesList[0] != null && (boolean) preferencesList[0]) {
+			Pack.ReadObjectFromFile(savePoint);
 		} else {
 			Object[] responses = new String[] { "Load", "New" };
 			int response = JOptionPane.showOptionDialog(new JFrame(),
-					"Would you like to load a save or create a new calendar?", "Gym Bro Launch", JOptionPane.YES_NO_OPTION,
-					JOptionPane.PLAIN_MESSAGE, null, responses, responses[0]);
+					"Would you like to load a save or create a new calendar?", "Gym Bro Launch",
+					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, responses, responses[0]);
 			if (response == 0) {
 				Pack.ReadObjectFromFile(savePoint);
 			}
 		}
-		
+
 		list = DaysList.getInstance();
 		SetDayRoster();
 
-		//western side of GUI
+		// western side of GUI
 		JPanel west = new JPanel();
-		west.setPreferredSize(new Dimension(400,500));
+		west.setPreferredSize(new Dimension(400, 500));
 		west.setLayout(new GridBagLayout());
-		
+
 		cdl.setBorder(BorderFactory.createLineBorder(Color.BLACK, 4));
 		cdl.setMinimumSize(new Dimension(200, 500));
 		cdl_storedDate = LocalDate.now();
-		
+
 		JPanel buttonPlatform = new JPanel();
 		buttonPlatform.setBackground(Color.RED);
-		buttonPlatform.setMinimumSize(new Dimension(50,50));
-		
+		buttonPlatform.setMinimumSize(new Dimension(50, 50));
+
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridx = 0;
 		c.gridy = GridBagConstraints.RELATIVE;
@@ -172,37 +172,37 @@ public class GUI {
 		c.weighty = 0;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.anchor = GridBagConstraints.CENTER;
-		
+
 		JLabel calLabel = new JLabel("Gym Bro Calendar", SwingConstants.CENTER);
 		calLabel.setFont(new Font("calLabel", Font.BOLD, 24));
-		
+
 		west.add(calLabel, c);
-		
+
 		c.weighty = 1;
 		c.fill = GridBagConstraints.BOTH;
 		c.gridheight = 7;
 		west.add(cdl, c);
-		
+
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridheight = 1;
 		c.weighty = 0;
 		west.add(buttonPlatform, c);
-		
+
 		JPanel thisWeekPanel = new JPanel();
 		thisWeekPanel.setBackground(Color.DARK_GRAY);
 		JButton returnWeek = new JButton("Go to this Week");
 		thisWeekPanel.add(returnWeek);
 		west.add(thisWeekPanel, c);
-		
+
 		frame.add(BorderLayout.WEST, west);
-		
-		//Adding buttons to ButtonPlatform
+
+		// Adding buttons to ButtonPlatform
 		buttonPlatform.setLayout(new GridBagLayout());
 		GridBagConstraints d = new GridBagConstraints();
-		
+
 		d.gridy = 0;
 		d.gridx = GridBagConstraints.RELATIVE;
-		
+
 		JButton rightArrow = new JButton(">");
 		JButton leftArrow = new JButton("<");
 		rightArrow.setFocusable(false);
@@ -218,18 +218,18 @@ public class GUI {
 		mainPanel.setAutoscrolls(true);
 		frame.add(BorderLayout.CENTER, scrollPane);
 
-		
 		// set colors
 		menubar.setOpaque(true);
 		menubar.setBackground(Color.gray);
-		
-		//User Profile on East side
-		EastPanel = CreateEastPanel();
+
+		// User Profile on East side
+		EastPanel = new JPanel();
+		EastPanel.add(CreateEastPanel());
 		frame.add(BorderLayout.EAST, EastPanel);
 
 		// set Frame visible
 		frame.setVisible(true);
-		
+
 		returnWeek.addActionListener(new ActionListener() {
 
 			@Override
@@ -237,16 +237,16 @@ public class GUI {
 				cdl_storedDate = LocalDate.now();
 				cdl_arrow(0);
 			}
-			
+
 		});
-		
+
 		rightArrow.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				GUI.cdl_arrow(7);
 			}
-			
+
 		});
 
 		leftArrow.addActionListener(new ActionListener() {
@@ -255,18 +255,19 @@ public class GUI {
 			public void actionPerformed(ActionEvent e) {
 				GUI.cdl_arrow(-7);
 			}
-			
+
 		});
-		
+
 		// ActionListeners for all buttons and options
 		file_new.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Object[] choices = new String[] {"Confirm", "Cancel"};
+				Object[] choices = new String[] { "Confirm", "Cancel" };
 				int result = JOptionPane.showOptionDialog(new JFrame(),
-						"Are you sure you want to create a new schedule?\nThis will overwrite any existing data.", "Gym Bro: New",
-						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, choices, choices[1]);
+						"Are you sure you want to create a new schedule?\nThis will overwrite any existing data.",
+						"Gym Bro: New", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, choices,
+						choices[1]);
 				if (result == 0) {
 					DaysList.getInstance().removeAll(DaysList.getInstance());
 					GUI.ClearDayRoster();
@@ -276,9 +277,9 @@ public class GUI {
 					GUI.save();
 				}
 			}
-			
+
 		});
-		
+
 		file_save.addActionListener(new ActionListener() {
 
 			@Override
@@ -304,9 +305,9 @@ public class GUI {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Object[] exitResults = new String[] { "QUIT", "CANCEL" };
-				int result = JOptionPane.showOptionDialog(new JFrame(),
-						"Are you sure you want to quit without saving?", "Gym Bro Exit",
-						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, exitResults, exitResults[1]);
+				int result = JOptionPane.showOptionDialog(new JFrame(), "Are you sure you want to quit without saving?",
+						"Gym Bro Exit", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, exitResults,
+						exitResults[1]);
 				if (result == JOptionPane.YES_OPTION) {
 					frame.dispose();
 					System.exit(0);
@@ -314,23 +315,23 @@ public class GUI {
 			}
 
 		});
-		
+
 		file_save_exit.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Object[] exitResults = new String[] { "SAVE AND QUIT", "CANCEL" };
-				int result = JOptionPane.showOptionDialog(new JFrame(),
-						"Are you sure you want to save and quit?", "Gym Bro Exit",
-						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, exitResults, exitResults[1]);
+				int result = JOptionPane.showOptionDialog(new JFrame(), "Are you sure you want to save and quit?",
+						"Gym Bro Exit", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, exitResults,
+						exitResults[1]);
 				if (result == 0) {
 					save();
 					frame.dispose();
 					System.exit(0);
 				}
-				
+
 			}
-			
+
 		});
 
 		edit_preferences.addActionListener(new ActionListener() {
@@ -339,8 +340,8 @@ public class GUI {
 			public void actionPerformed(ActionEvent e) {
 				JFrame preferences = new JFrame("Gym Bro: Preferences");
 				preferences.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-				preferences.setSize(600,600);
-				
+				preferences.setSize(600, 600);
+
 				JPanel pan = new JPanel();
 				pan.setLayout(new GridBagLayout());
 				GridBagConstraints f = new GridBagConstraints();
@@ -349,49 +350,47 @@ public class GUI {
 				f.fill = GridBagConstraints.HORIZONTAL;
 				f.anchor = GridBagConstraints.PAGE_START;
 				f.weighty = 1;
-				
+
 				JLabel panLabel = new JLabel("Preferences Menu");
 				panLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
 				panLabel.setFont(new Font("panLabel", Font.BOLD, 24));
-				
+
 				pan.add(panLabel, f);
-				
+
 				JCheckBox startupLoad;
-				
+
 				if (preferencesList[0] != null) {
-					startupLoad = new JCheckBox("Automatically Load Save", (boolean)preferencesList[0]);
+					startupLoad = new JCheckBox("Automatically Load Save", (boolean) preferencesList[0]);
 				} else {
 					startupLoad = new JCheckBox("Automatically Load Save");
 				}
-				
+
 				pan.add(startupLoad, f);
-				
+
 				JButton saveButton = new JButton("Save Preferences");
 				pan.add(saveButton, f);
-				
+
 				preferences.add(pan);
 				preferences.setVisible(true);
-				
-				
+
 				saveButton.addActionListener(new ActionListener() {
 
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						Pack.WriteObjectToFile(preferencesList, prefSavePoint);
 					}
-					
+
 				});
-				
-				
+
 				startupLoad.addItemListener(new ItemListener() {
 
 					@Override
 					public void itemStateChanged(ItemEvent e) {
 						preferencesList[0] = (e.getStateChange() == 1);
 					}
-					
+
 				});
-				
+
 			}
 
 		});
@@ -400,7 +399,7 @@ public class GUI {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+
 			}
 
 		});
@@ -409,24 +408,26 @@ public class GUI {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
-				JOptionPane.showMessageDialog(new JFrame("Credit"), "Freeware produced independently by Kyle Griffin\nCopyright 2020");
+
+				JOptionPane.showMessageDialog(new JFrame("Credit"),
+						"Freeware produced independently by Kyle Griffin\nCopyright 2020");
 
 			}
 
 		});
 
 	}
-	
+
 	private static void changeStoredDate(int val) {
 		if (val > 0) {
 			cdl_storedDate = cdl_storedDate.plusDays(val);
 		} else {
-			//do this because not sure how plusDays and minusDays are specifically implemented
+			// do this because not sure how plusDays and minusDays are specifically
+			// implemented
 			cdl_storedDate = cdl_storedDate.minusDays(Math.abs(val));
 		}
 	}
-	
+
 	private static void cdl_arrow(int val) {
 		changeStoredDate(val);
 		cdl.removeAll();
@@ -447,11 +448,11 @@ public class GUI {
 		updateCDL();
 		resetMainPanel();
 	}
-	
+
 	protected static void updateCDL() {
 		cdl.updateUI();
 	}
-	
+
 	protected static void resetMainPanel() {
 		mainPanel.removeAll();
 		mainPanel.updateUI();
@@ -461,10 +462,11 @@ public class GUI {
 		LocalDate startingDate = LocalDate.now();
 		SetDayRoster(startingDate);
 	}
-	
+
 	protected static void SetDayRoster(LocalDate startingDate) {
 		// Find the most recent Sunday's date
-		LocalDate temp = startingDate.minusDays(DaysSinceSunday(startingDate.getDayOfWeek()));;
+		LocalDate temp = startingDate.minusDays(DaysSinceSunday(startingDate.getDayOfWeek()));
+		;
 		for (int i = 0; i < numDaysShown; i++) {
 			LocalDate currDate = temp.plusDays(i);
 			GymDay find = new GymDay(currDate);
@@ -478,11 +480,149 @@ public class GUI {
 
 		}
 	}
-	
+
+	/**
+	 * This Method is to be used as follows - EastPanel.add( CreateEastPanel() );
+	 * @return JPanel that serves as argument to the add method for EastPanel
+	 */
 	protected static JPanel CreateEastPanel() {
-		JPanel pan = new JPanel();
+		JPanel pan = new JPanel(new GridBagLayout());
+		GridBagConstraints d = new GridBagConstraints();
+		d.gridy = GridBagConstraints.RELATIVE;
+		d.gridx = 0;
+		d.weightx = 1;
+		d.fill = GridBagConstraints.HORIZONTAL;
+		d.anchor = GridBagConstraints.PAGE_START;
+		d.insets = new Insets(0,0,25,0);
+
+		pan.setPreferredSize(new Dimension(200, 200));
+
+		// if a user profile hasn't been created yet
+		if (profile == null) {
+
+			JButton createProfile = new JButton("Create Profile");
+			pan.add(createProfile);
+			createProfile.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					UserCreation();
+				}
+			});
+
+			return pan;
+		}
+		// if a user profile has been created
+		JPanel tightPanel = new JPanel(new GridBagLayout());
+		tightPanel.setBorder(BorderFactory.createLineBorder(Color.black, 2));
+		tightPanel.setBackground(Color.DARK_GRAY);
 		
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridy = GridBagConstraints.RELATIVE;
+		c.gridx = 0;
+		c.weightx = 1;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.anchor = GridBagConstraints.PAGE_START;
+		c.insets = new Insets(0,0,10,0);
+		
+		JLabel userIcon = new JLabel(new ImageIcon(profile.scaleProfImage(75,75)), SwingConstants.CENTER);
+		userIcon.setPreferredSize(new Dimension(75,75));
+		JLabel age = new JLabel(String.valueOf(profile.getAge()), SwingConstants.CENTER);
+		Font userFont = new Font("userFont", Font.BOLD, 18);
+		age.setFont(userFont);
+		JLabel wholeName = new JLabel(profile.getFirst() + " " + profile.getLast(), SwingConstants.CENTER);
+		wholeName.setFont(userFont);
+		
+		tightPanel.add(userIcon,c);
+		tightPanel.add(wholeName,c);
+		tightPanel.add(age,c);
+		
+		pan.add(tightPanel, d);
 		return pan;
+	}
+
+	private static void UserCreation() {
+		JFrame userFrame = new JFrame("User Creation");
+		userFrame.setResizable(false);
+		userFrame.setLayout(new BorderLayout());
+		JPanel userPanel = new JPanel(new GridBagLayout());
+		userFrame.add(BorderLayout.CENTER, userPanel);
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridy = GridBagConstraints.RELATIVE;
+		c.gridx = 1;
+		c.weightx = 3;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.anchor = GridBagConstraints.PAGE_START;
+		c.insets = new Insets(10, 0, 0, 30);
+
+		JLabel userPic = new JLabel(new ImageIcon(UserProfile.getDefaultImage()));
+		JLabel userLabel = new JLabel("User Creation", SwingConstants.CENTER);
+		JTextField firstField = new JTextField(20);
+		JTextField lastField = new JTextField(20);
+		JTextField ageField = new JTextField(20); // maybe make options
+		JComboBox<user.UserProfile.gender> genderField = new JComboBox<>(user.UserProfile.gender.values());
+		JPanel buttonPanel = new JPanel(new GridLayout(1, 2));
+		JButton create = new JButton("Create");
+		JButton cancel = new JButton("Cancel");
+
+		buttonPanel.add(create);
+		buttonPanel.add(cancel);
+
+		userPanel.add(userPic, c);
+		userPanel.add(userLabel, c);
+		userPanel.add(firstField, c);
+		userPanel.add(lastField, c);
+		userPanel.add(ageField, c);
+		userPanel.add(genderField, c);
+		userPanel.add(buttonPanel, c);
+
+		c.insets = new Insets(10, 0, 0, 10);
+		c.weightx = 1;
+		c.gridx = 0;
+		c.gridy = 2;
+		JLabel firstLabel = new JLabel("First Name:", SwingConstants.RIGHT);
+		userPanel.add(firstLabel, c);
+
+		c.gridy++;
+		JLabel lastLabel = new JLabel("Last Name:", SwingConstants.RIGHT);
+		userPanel.add(lastLabel, c);
+
+		c.gridy++;
+		JLabel ageLabel = new JLabel("Age:", SwingConstants.RIGHT);
+		userPanel.add(ageLabel, c);
+
+		c.gridy++;
+		JLabel genderLabel = new JLabel("Sex:", SwingConstants.RIGHT);
+		userPanel.add(genderLabel, c);
+
+		userPanel.setPreferredSize(new Dimension(400, 600));
+		userFrame.setSize(400, 600);
+		userFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		userFrame.setVisible(true);
+		userFrame.revalidate();
+
+		cancel.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				userFrame.dispose();
+			}
+
+		});
+
+		create.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				profile = new UserProfile(firstField.getText(), lastField.getText(),
+						Integer.parseInt(ageField.getText()), (user.UserProfile.gender) genderField.getSelectedItem());
+				EastPanel.removeAll();
+				EastPanel.add(CreateEastPanel());
+				EastPanel.revalidate();
+				EastPanel.updateUI();
+				userFrame.dispose();
+			}
+
+		});
 	}
 
 	static void ClearDayRoster() {
@@ -545,7 +685,5 @@ public class GUI {
 		mainPanel.repaint();
 		mainPanel.setVisible(true);
 	}
-	
-	
 
 }
