@@ -522,7 +522,7 @@ public class GUI {
 		c.weightx = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.anchor = GridBagConstraints.PAGE_START;
-		c.insets = new Insets(0,0,10,0);
+		c.insets = new Insets(5,0,5,0);
 		
 		JLabel userIcon = new JLabel(new ImageIcon(profile.scaleProfImage(75,75)), SwingConstants.CENTER);
 		userIcon.setPreferredSize(new Dimension(75,75));
@@ -530,11 +530,14 @@ public class GUI {
 		Font userFont = new Font("userFont", Font.BOLD, 18);
 		age.setFont(userFont);
 		JLabel wholeName = new JLabel(profile.getFirst() + " " + profile.getLast(), SwingConstants.CENTER);
+		JLabel height = new JLabel(profile.getHeight()/12 + "' " +profile.getHeight() % 12 + "''", SwingConstants.CENTER);
+		height.setFont(userFont);
 		wholeName.setFont(userFont);
 		
 		tightPanel.add(userIcon,c);
 		tightPanel.add(wholeName,c);
 		tightPanel.add(age,c);
+		tightPanel.add(height, c);
 		
 		pan.add(tightPanel, d);
 		return pan;
@@ -559,6 +562,7 @@ public class GUI {
 		JTextField firstField = new JTextField(20);
 		JTextField lastField = new JTextField(20);
 		JTextField ageField = new JTextField(20); // maybe make options
+		JTextField heightField = new JTextField(20);
 		JComboBox<user.UserProfile.gender> genderField = new JComboBox<>(user.UserProfile.gender.values());
 		JPanel buttonPanel = new JPanel(new GridLayout(1, 2));
 		JButton create = new JButton("Create");
@@ -572,6 +576,7 @@ public class GUI {
 		userPanel.add(firstField, c);
 		userPanel.add(lastField, c);
 		userPanel.add(ageField, c);
+		userPanel.add(heightField, c);
 		userPanel.add(genderField, c);
 		userPanel.add(buttonPanel, c);
 
@@ -590,6 +595,10 @@ public class GUI {
 		JLabel ageLabel = new JLabel("Age:", SwingConstants.RIGHT);
 		userPanel.add(ageLabel, c);
 
+		c.gridy++;
+		JLabel heightLabel = new JLabel("Height (in.):", SwingConstants.RIGHT);
+		userPanel.add(heightLabel, c);
+		
 		c.gridy++;
 		JLabel genderLabel = new JLabel("Sex:", SwingConstants.RIGHT);
 		userPanel.add(genderLabel, c);
@@ -614,7 +623,7 @@ public class GUI {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				profile = new UserProfile(firstField.getText(), lastField.getText(),
-						Integer.parseInt(ageField.getText()), (user.UserProfile.gender) genderField.getSelectedItem());
+						Integer.parseInt(ageField.getText()), Integer.parseInt(heightField.getText()) , (user.UserProfile.gender) genderField.getSelectedItem());
 				EastPanel.removeAll();
 				EastPanel.add(CreateEastPanel());
 				EastPanel.revalidate();

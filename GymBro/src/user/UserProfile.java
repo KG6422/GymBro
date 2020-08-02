@@ -15,7 +15,7 @@ public class UserProfile {
 
 	private String first, last;
 	private ArrayList<WeightDay> weightList;
-	private int age;
+	private int age, height;
 	private gender gen;
 	private BufferedImage image;
 	private static BufferedImage defaultImage;
@@ -35,11 +35,12 @@ public class UserProfile {
 		return createImage("defprof.png");
 	}
 	
-	public UserProfile(String first, String last, int age, gender gen) {
+	public UserProfile(String first, String last, int age, int height, gender gen) {
 		defaultImage = getDefaultImage();
 		this.first = first;
 		this.last = last;
 		this.age = age;
+		this.height = height;
 		this.gen = gen;
 		image = defaultImage;
 		profileCreation = LocalDate.now();
@@ -66,6 +67,10 @@ public class UserProfile {
 		return res;
 	}
 
+	public int getHeight() {
+		return height;
+	}
+	
 	public String getFirst() {
 		return first;
 	}
