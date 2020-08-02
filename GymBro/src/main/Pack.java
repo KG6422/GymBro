@@ -17,6 +17,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import gui.GUI;
+import user.UserProfile;
 
 public class Pack implements Serializable {
 
@@ -24,18 +25,14 @@ public class Pack implements Serializable {
 
 	static File saveFile;
 
-	/**
-	 * 
-	 * @return boolean val if save was complete
-	 * @deprecated use WriteObjectToFile() instead.
-	 */
-	@Deprecated
-	public static boolean Save() {
-		// if there is no savepoint then create one
-		String currentDirFile = System.getProperty("user.dir");
-		saveFile = new File(currentDirFile + "\\dir_sv");
-
-		return true;
+	public enum PackType{
+		DaysList,
+		Preferences,
+		UserProfile;
+		
+		PackType(){
+		}
+		
 	}
 	
 	public static void WriteObjectToFile(Object o, File inFile) {
@@ -62,6 +59,13 @@ public class Pack implements Serializable {
 		}
 	}
 
+	/**
+	 * 
+	 * @param inFile file to save preferences to
+	 * @return Object Array with Preferences
+	 * @deprecated Use ReadAllFromFile(inFile, type);
+	 */
+	@Deprecated 
 	public static Object[] ReadPreferencesFromFile(File inFile) {
 		if (inFile == null) {
 			JOptionPane.showMessageDialog(new JFrame(), "Unable to Load");
@@ -94,7 +98,77 @@ public class Pack implements Serializable {
 		}
 		return new Object[GUI.preferencesSize];
 	}
+	
+	/**
+	 * Allows for all objects to be read from file, must cast yourself
+	 * Passing DaysList as the type variable essentially makes this method
+	 * into a void where the return value is handled
+	 * @param inFile : the file that the object is loaded from
+	 * @param type : enum representation of what process the method is loading,
+	 * useful for getting a return value with the correct type
+	 */
+	public static Object ReadAllFromFile(File inFile, PackType type) {
+		if (inFile == null) {
+			JOptionPane.showMessageDialog(new JFrame(), "Unable to Load");
+			return null;
+		}
+		try {
+			FileInputStream fileIn = new FileInputStream(inFile);
+			if (fileIn.available() == 0) {
+				fileIn.close();
+				WriteObjectToFile(new Object[] {false}, inFile, false);
+				if (type.equals(PackType.Preferences)) {
+					return new Object[GUI.preferencesSize];
+				}
+				if (type.equals(PackType.DaysList)) {
+					return new Object[GUI.DaysListSize];
+				}
+				if (type.equals(PackType.UserProfile)) {
+					return null;
+				}
+				
+			}
+			
+			if (type.equals(PackType.Preferences) || type.equals(PackType.UserProfile)) {
+				ObjectInputStream objectIn = new ObjectInputStream(fileIn);
+				Object returnable = objectIn.readObject();
+				objectIn.close();
+				return returnable;
+			}
+			if (type.equals(PackType.DaysList)) {
+				ObjectInputStream objectIn = new ObjectInputStream(fileIn);
+				LinkedList<GymDay> obj = (DaysList) objectIn.readObject();
+				objectIn.close();
+				DaysList.getInstance().removeAll(DaysList.getInstance());
+				for (GymDay o : obj) {
+					DaysList.getInstance().addLast(o);
+				}
+				//essentially void
+				return DaysList.getInstance();
+			}
 
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (EOFException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * 
+	 * @param inFile
+	 * @Deprecated Use ReadAllFromFile(File inFile)
+	 */
+	@Deprecated
 	public static void ReadObjectFromFile(File inFile) {
 		if (inFile == null) {
 			JOptionPane.showMessageDialog(new JFrame(), "Unable to Load");

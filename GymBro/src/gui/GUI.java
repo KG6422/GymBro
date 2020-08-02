@@ -41,6 +41,7 @@ import user.UserProfile;
 import main.DaysList;
 import main.GymDay;
 import main.Pack;
+import main.Pack.PackType;
 
 public class GUI {
 
@@ -50,12 +51,15 @@ public class GUI {
 	private static JPanel cdl;
 	private static JPanel EastPanel;
 	private static MainPanel mainPanel;
-	public static File savePoint, prefSavePoint;
+	public static File savePoint, prefSavePoint, userSavePoint;
 	private static JScrollPane scrollPane;
 	private final static int SCROLL_SPEED = 12;
 	private static LocalDate cdl_storedDate;
 	protected static Object[] preferencesList;
+	//these 3 final ints are used when making default object[] in Pack
 	public static final int preferencesSize = 1;
+	public static final int DaysListSize = 6;
+	public static final int UserProfileSize = 8;
 	private static UserProfile profile;
 
 	public static void main(String[] args) {
@@ -132,27 +136,35 @@ public class GUI {
 		String currentDirFile = System.getProperty("user.dir");
 		savePoint = new File(currentDirFile + "\\dir_sv.txt");
 		prefSavePoint = new File(currentDirFile + "\\pref_sv.txt");
+		userSavePoint = new File(currentDirFile + "\\user_sv.txt");
 
 		// preferences list
-		preferencesList = Pack.ReadPreferencesFromFile(prefSavePoint);
+		preferencesList = (Object[])Pack.ReadAllFromFile(prefSavePoint,PackType.Preferences);
 		if (preferencesList[0] != null && (boolean) preferencesList[0]) {
-			Pack.ReadObjectFromFile(savePoint);
+			Pack.ReadAllFromFile(savePoint,PackType.DaysList);
 		} else {
 			Object[] responses = new String[] { "Load", "New" };
 			int response = JOptionPane.showOptionDialog(new JFrame(),
 					"Would you like to load a save or create a new calendar?", "Gym Bro Launch",
 					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, responses, responses[0]);
 			if (response == 0) {
-				Pack.ReadObjectFromFile(savePoint);
+				Pack.ReadAllFromFile(savePoint,PackType.DaysList);
 			}
 		}
+		
+		// load user data if it exists
+		Object tempO = ( Pack.ReadAllFromFile(userSavePoint, PackType.UserProfile) );
+		if (tempO instanceof UserProfile) {
+			profile = (UserProfile)tempO;
+		}
+		
 
 		list = DaysList.getInstance();
 		SetDayRoster();
 
 		// western side of GUI
 		JPanel west = new JPanel();
-		west.setPreferredSize(new Dimension(400, 500));
+		west.setPreferredSize(new Dimension(250, 500));
 		west.setLayout(new GridBagLayout());
 
 		cdl.setBorder(BorderFactory.createLineBorder(Color.BLACK, 4));
@@ -443,7 +455,7 @@ public class GUI {
 
 	static void load() {
 		ClearDayRoster();
-		Pack.ReadObjectFromFile(savePoint);
+		Pack.ReadAllFromFile(savePoint, PackType.DaysList);
 		SetDayRoster();
 		updateCDL();
 		resetMainPanel();
@@ -510,6 +522,8 @@ public class GUI {
 			});
 
 			return pan;
+		} else {
+			profile.establishImageFromByteArray();
 		}
 		// if a user profile has been created
 		JPanel tightPanel = new JPanel(new GridBagLayout());
@@ -526,6 +540,9 @@ public class GUI {
 		
 		JLabel userIcon = new JLabel(new ImageIcon(profile.scaleProfImage(75,75)), SwingConstants.CENTER);
 		userIcon.setPreferredSize(new Dimension(75,75));
+		JButton editImage = new JButton("edit image");
+		editImage.setPreferredSize(new Dimension(25,10));
+		editImage.setFont(new Font("editImage", Font.ITALIC, 8));
 		JLabel age = new JLabel(String.valueOf(profile.getAge()), SwingConstants.CENTER);
 		Font userFont = new Font("userFont", Font.BOLD, 18);
 		age.setFont(userFont);
@@ -535,11 +552,29 @@ public class GUI {
 		wholeName.setFont(userFont);
 		
 		tightPanel.add(userIcon,c);
+		tightPanel.add(editImage, c);
 		tightPanel.add(wholeName,c);
 		tightPanel.add(age,c);
 		tightPanel.add(height, c);
 		
 		pan.add(tightPanel, d);
+		
+		editImage.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser jfc = new JFileChooser();
+				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				int returnVal = jfc.showOpenDialog(new JFrame());
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					String pathname = jfc.getSelectedFile().getAbsolutePath();
+					profile.setImage(pathname);
+					profile.scaleProfImage(100, 100);
+				}
+			}
+			
+		});
+		
 		return pan;
 	}
 
@@ -629,6 +664,7 @@ public class GUI {
 				EastPanel.revalidate();
 				EastPanel.updateUI();
 				userFrame.dispose();
+				Pack.WriteObjectToFile(profile, userSavePoint);
 			}
 
 		});

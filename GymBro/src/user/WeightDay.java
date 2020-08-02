@@ -1,9 +1,11 @@
 package user;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class WeightDay implements Comparable<WeightDay>{
+public class WeightDay implements Comparable<WeightDay>,Serializable{
 
+	private static final long serialVersionUID = -6639552517449111990L;
 	float[] weights;
 	LocalDate date;
 	

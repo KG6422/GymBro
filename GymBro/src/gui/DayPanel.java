@@ -50,7 +50,7 @@ public class DayPanel extends JPanel{
 		this.setMaximumSize(new Dimension(frameWidth/4, frameHeight / 9));
 		this.setMinimumSize(new Dimension(frameWidth/4, frameHeight / 11));
 		
-		JTextField ddate = (LocalDate.now().equals(storedDate)) ? new JTextField(storedDate.toString() + "  -  TODAY") : new JTextField(storedDate.toString());
+		JTextField ddate = (LocalDate.now().equals(storedDate)) ? new JTextField(storedDate.toString() + " - TODAY") : new JTextField(storedDate.toString());
 		
 		
 		ddate.setEditable(false);
