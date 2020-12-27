@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 
@@ -44,6 +45,7 @@ public class GUI {
 	public static final int DaysListSize = 6;
 	public static final int UserProfileSize = 8;
 
+	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 		/*
 		 * Empty loop needed because Java does not automatically initialize
@@ -62,7 +64,6 @@ public class GUI {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 				| UnsupportedLookAndFeelException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 			System.out.println("BAD LOOKANDFEEL");
 		}
@@ -72,9 +73,6 @@ public class GUI {
 		frame.setSize(1024, 720);
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		frame.setLayout(new BorderLayout());
-
-		int fw = frame.getWidth();
-		int fh = frame.getHeight();
 
 		// Menu Bar
 		JMenuBar menubar = new JMenuBar();
@@ -120,6 +118,24 @@ public class GUI {
 		savePoint = new File(currentDirFile + "\\dir_sv.txt");
 		prefSavePoint = new File(currentDirFile + "\\pref_sv.txt");
 		userSavePoint = new File(currentDirFile + "\\user_sv.txt");
+		
+		try {
+			savePoint.createNewFile();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		try {
+			prefSavePoint.createNewFile();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		try {
+			userSavePoint.createNewFile();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 
 		// preferences list
 		preferencesList = (Object[])Pack.ReadAllFromFile(prefSavePoint,PackType.Preferences);

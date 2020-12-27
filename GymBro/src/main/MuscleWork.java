@@ -69,6 +69,10 @@ public class MuscleWork implements Comparable<MuscleWork> {
 		count += value;
 	}
 	
+	public boolean getPrim() {
+		return isPrimary;
+	}
+	
 	public String toString() {
 		return "MuscleWork:"+hashCode() + ", " + getMuscle() + ", " + getKRP() + ", worked " + getCount() + " times;";
 	}

@@ -149,6 +149,7 @@ public class MainPanel extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				@SuppressWarnings("unused")
 				JTable table = (JTable) e.getSource();
 				int modelRow = Integer.valueOf(e.getActionCommand());
 				// add panels for all muscles here
@@ -303,6 +304,7 @@ public class MainPanel extends JPanel {
 	 * @param info : The messily sorted information sent from the user's interaction
 	 *             to AddPanel
 	 */
+	@SuppressWarnings("unused")
 	protected void sendAddedInfo(Object[] info) {
 		// sort index 0 - String name
 		String i0 = (String) info[0];

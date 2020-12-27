@@ -3,21 +3,15 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.border.Border;
 
 import main.DayType;
 import main.GymDay;
@@ -26,7 +20,6 @@ public class DayPanel extends JPanel{
 
 	private static final long serialVersionUID = -7454359579624638916L;
 	private boolean hasBeenSet;
-	private static final int DATEW = 12;
 	
 	protected DayType type;
 	protected LocalDate date;

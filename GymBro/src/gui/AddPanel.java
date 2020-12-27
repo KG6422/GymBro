@@ -8,7 +8,6 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -17,7 +16,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.JTree;
 import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -28,7 +26,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
 import main.ex;
-import main.muscle;
 
 public class AddPanel extends JPanel {
 	private static final long serialVersionUID = -2558938699671322713L;
@@ -39,11 +36,9 @@ public class AddPanel extends JPanel {
 	private Object[] returnList; // 0 Activity, 1 Sets, 2 Reps, 3 Weight, 4 KRP *can leave empty*, 5 Muscle List,
 									// 6 *can leave empty*
 
-	private MainPanel parent;
 
 	protected AddPanel(MainPanel parent) {
 		super();
-		this.parent = parent;
 		returnList = new Object[7];
 		this.setLayout(new GridBagLayout());
 		GridBagConstraints f = new GridBagConstraints();

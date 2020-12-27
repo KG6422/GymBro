@@ -5,8 +5,6 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.LinkedList;
 
-import javax.swing.JButton;
-
 import gui.DayPanel;
 
 public class GymDay implements Comparable<GymDay>, Serializable {
