@@ -8,6 +8,7 @@ public enum DayType implements Serializable{
 	PUSH("PUSH", new musclegroup[] {musclegroup.chest, musclegroup.triceps, musclegroup.shoulders}),
 	PULL("PULL", new musclegroup[] {musclegroup.back, musclegroup.biceps}),
 	LEG("LEG", new musclegroup[] {musclegroup.legs}),
+	POP("OTHER", new musclegroup[] {}),
 	REST("REST", new musclegroup[] {musclegroup.legs});
 	
 	private static final long serialVersionUID = -457238974912L;

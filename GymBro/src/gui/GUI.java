@@ -8,36 +8,20 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.io.EOFException;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.time.Clock;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.MonthDay;
-import java.time.Year;
-import java.util.LinkedList;
-import java.util.Queue;
 
 import javax.swing.*;
 
-import main.Activity;
 import main.DayType;
-import main.ex;
 import main.muscle;
 import main.musclegroup;
 import main.stretches;
-import user.UserProfile;
 import main.DaysList;
 import main.GymDay;
 import main.Pack;
@@ -49,7 +33,6 @@ public class GUI {
 	private static DaysList list;
 	private final static int numDaysShown = 7;
 	private static JPanel cdl;
-	private static JPanel EastPanel;
 	private static MainPanel mainPanel;
 	public static File savePoint, prefSavePoint, userSavePoint;
 	private static JScrollPane scrollPane;
@@ -60,14 +43,14 @@ public class GUI {
 	public static final int preferencesSize = 1;
 	public static final int DaysListSize = 6;
 	public static final int UserProfileSize = 8;
-	private static UserProfile profile;
 
 	public static void main(String[] args) {
-		profile = null;
-		// whatever you do, don't delete this for-loop
-		// for some reason the muscle enum doesn't load fully without this.
-		// REASON FOUND: because images are initialized by method call - java
-		// does not automatically do this
+		/*
+		 * Empty loop needed because Java does not automatically initialize
+		 * images when in panels. Going through this loop initializes them,
+		 * allowing for images to pop up in their respective panes.
+		 * AKA do not remove :)
+		 */
 		for (muscle m : musclegroup.back.getMuscles()) {
 		}
 		for (stretches s : stretches.values()) {
@@ -152,12 +135,6 @@ public class GUI {
 			}
 		}
 		
-		// load user data if it exists
-		Object tempO = ( Pack.ReadAllFromFile(userSavePoint, PackType.UserProfile) );
-		if (tempO instanceof UserProfile) {
-			profile = (UserProfile)tempO;
-		}
-		
 
 		list = DaysList.getInstance();
 		SetDayRoster();
@@ -233,11 +210,6 @@ public class GUI {
 		// set colors
 		menubar.setOpaque(true);
 		menubar.setBackground(Color.gray);
-
-		// User Profile on East side
-		EastPanel = new JPanel();
-		EastPanel.add(CreateEastPanel());
-		frame.add(BorderLayout.EAST, EastPanel);
 
 		// set Frame visible
 		frame.setVisible(true);
@@ -493,182 +465,6 @@ public class GUI {
 		}
 	}
 
-	/**
-	 * This Method is to be used as follows - EastPanel.add( CreateEastPanel() );
-	 * @return JPanel that serves as argument to the add method for EastPanel
-	 */
-	protected static JPanel CreateEastPanel() {
-		JPanel pan = new JPanel(new GridBagLayout());
-		GridBagConstraints d = new GridBagConstraints();
-		d.gridy = GridBagConstraints.RELATIVE;
-		d.gridx = 0;
-		d.weightx = 1;
-		d.fill = GridBagConstraints.HORIZONTAL;
-		d.anchor = GridBagConstraints.PAGE_START;
-		d.insets = new Insets(0,0,25,0);
-
-		pan.setPreferredSize(new Dimension(200, 200));
-
-		// if a user profile hasn't been created yet
-		if (profile == null) {
-
-			JButton createProfile = new JButton("Create Profile");
-			pan.add(createProfile);
-			createProfile.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					UserCreation();
-				}
-			});
-
-			return pan;
-		} else {
-			profile.establishImageFromByteArray();
-		}
-		// if a user profile has been created
-		JPanel tightPanel = new JPanel(new GridBagLayout());
-		tightPanel.setBorder(BorderFactory.createLineBorder(Color.black, 2));
-		tightPanel.setBackground(Color.DARK_GRAY);
-		
-		GridBagConstraints c = new GridBagConstraints();
-		c.gridy = GridBagConstraints.RELATIVE;
-		c.gridx = 0;
-		c.weightx = 1;
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.anchor = GridBagConstraints.PAGE_START;
-		c.insets = new Insets(5,0,5,0);
-		
-		JLabel userIcon = new JLabel(new ImageIcon(profile.scaleProfImage(75,75)), SwingConstants.CENTER);
-		userIcon.setPreferredSize(new Dimension(75,75));
-		JButton editImage = new JButton("edit image");
-		editImage.setPreferredSize(new Dimension(25,10));
-		editImage.setFont(new Font("editImage", Font.ITALIC, 8));
-		JLabel age = new JLabel(String.valueOf(profile.getAge()), SwingConstants.CENTER);
-		Font userFont = new Font("userFont", Font.BOLD, 18);
-		age.setFont(userFont);
-		JLabel wholeName = new JLabel(profile.getFirst() + " " + profile.getLast(), SwingConstants.CENTER);
-		JLabel height = new JLabel(profile.getHeight()/12 + "' " +profile.getHeight() % 12 + "''", SwingConstants.CENTER);
-		height.setFont(userFont);
-		wholeName.setFont(userFont);
-		
-		tightPanel.add(userIcon,c);
-		tightPanel.add(editImage, c);
-		tightPanel.add(wholeName,c);
-		tightPanel.add(age,c);
-		tightPanel.add(height, c);
-		
-		pan.add(tightPanel, d);
-		
-		editImage.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JFileChooser jfc = new JFileChooser();
-				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				int returnVal = jfc.showOpenDialog(new JFrame());
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					String pathname = jfc.getSelectedFile().getAbsolutePath();
-					profile.setImage(pathname);
-					profile.scaleProfImage(100, 100);
-				}
-			}
-			
-		});
-		
-		return pan;
-	}
-
-	private static void UserCreation() {
-		JFrame userFrame = new JFrame("User Creation");
-		userFrame.setResizable(false);
-		userFrame.setLayout(new BorderLayout());
-		JPanel userPanel = new JPanel(new GridBagLayout());
-		userFrame.add(BorderLayout.CENTER, userPanel);
-		GridBagConstraints c = new GridBagConstraints();
-		c.gridy = GridBagConstraints.RELATIVE;
-		c.gridx = 1;
-		c.weightx = 3;
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.anchor = GridBagConstraints.PAGE_START;
-		c.insets = new Insets(10, 0, 0, 30);
-
-		JLabel userPic = new JLabel(new ImageIcon(UserProfile.getDefaultImage()));
-		JLabel userLabel = new JLabel("User Creation", SwingConstants.CENTER);
-		JTextField firstField = new JTextField(20);
-		JTextField lastField = new JTextField(20);
-		JTextField ageField = new JTextField(20); // maybe make options
-		JTextField heightField = new JTextField(20);
-		JComboBox<user.UserProfile.gender> genderField = new JComboBox<>(user.UserProfile.gender.values());
-		JPanel buttonPanel = new JPanel(new GridLayout(1, 2));
-		JButton create = new JButton("Create");
-		JButton cancel = new JButton("Cancel");
-
-		buttonPanel.add(create);
-		buttonPanel.add(cancel);
-
-		userPanel.add(userPic, c);
-		userPanel.add(userLabel, c);
-		userPanel.add(firstField, c);
-		userPanel.add(lastField, c);
-		userPanel.add(ageField, c);
-		userPanel.add(heightField, c);
-		userPanel.add(genderField, c);
-		userPanel.add(buttonPanel, c);
-
-		c.insets = new Insets(10, 0, 0, 10);
-		c.weightx = 1;
-		c.gridx = 0;
-		c.gridy = 2;
-		JLabel firstLabel = new JLabel("First Name:", SwingConstants.RIGHT);
-		userPanel.add(firstLabel, c);
-
-		c.gridy++;
-		JLabel lastLabel = new JLabel("Last Name:", SwingConstants.RIGHT);
-		userPanel.add(lastLabel, c);
-
-		c.gridy++;
-		JLabel ageLabel = new JLabel("Age:", SwingConstants.RIGHT);
-		userPanel.add(ageLabel, c);
-
-		c.gridy++;
-		JLabel heightLabel = new JLabel("Height (in.):", SwingConstants.RIGHT);
-		userPanel.add(heightLabel, c);
-		
-		c.gridy++;
-		JLabel genderLabel = new JLabel("Sex:", SwingConstants.RIGHT);
-		userPanel.add(genderLabel, c);
-
-		userPanel.setPreferredSize(new Dimension(400, 600));
-		userFrame.setSize(400, 600);
-		userFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		userFrame.setVisible(true);
-		userFrame.revalidate();
-
-		cancel.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				userFrame.dispose();
-			}
-
-		});
-
-		create.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				profile = new UserProfile(firstField.getText(), lastField.getText(),
-						Integer.parseInt(ageField.getText()), Integer.parseInt(heightField.getText()) , (user.UserProfile.gender) genderField.getSelectedItem());
-				EastPanel.removeAll();
-				EastPanel.add(CreateEastPanel());
-				EastPanel.revalidate();
-				EastPanel.updateUI();
-				userFrame.dispose();
-				Pack.WriteObjectToFile(profile, userSavePoint);
-			}
-
-		});
-	}
 
 	static void ClearDayRoster() {
 		cdl.removeAll();

@@ -20,7 +20,7 @@ public enum musclegroup implements Serializable {
 			muscle.gluteus_medius, muscle.gluteus_minimus, muscle.hips_adductors, muscle.hips_flexors,
 			muscle.hips_outer, muscle.hamstrings_semitendinosus, muscle.hamstrings_biceps_femoris, muscle.sartorius,
 			muscle.tibialis_anterior, muscle.quadriceps_vastus_medialis, muscle.quadriceps_rectus_femoris,
-			muscle.quadriceps_vastus_lateralis, muscle.quadriceps_vastus_intermedius });
+			muscle.quadriceps_vastus_lateralis, muscle.quadriceps_vastus_intermedius, muscle.hamstrings_semimembranosus });
 
 	private musclegroup(String inName, muscle[] inMuscle) {
 		name = inName;
